@@ -1,3 +1,4 @@
+from __future__ import print_function
 import numpy as np
 from hpp_centroidal_dynamics import *
 from hpp_spline import *
@@ -68,7 +69,7 @@ Id = matrix([[1., 0., 0.], [0., 1., 0.], [0., 0., 1.]])
 excep = False
 try:
     cData.Kin_
-except RuntimeError, e:
+except RuntimeError as e:
     excep = True
 assert excep, "[ERROR] No kin assigned should have raised exception"
 cData.setKinematicConstraints(Id, matrix([0., 0., 1.]).T)
@@ -77,14 +78,14 @@ cData.Kin_
 excep = False
 try:
     cData.setKinematicConstraints(Id, matrix([0., 0., 0., 1.]).T)
-except RuntimeError, e:
+except RuntimeError as e:
     excep = True
 assert excep, "[ERROR] Miss matching matrix and vector should raise an error"
 
 excep = False
 try:
     cData.Ang_
-except RuntimeError, e:
+except RuntimeError as e:
     excep = True
 assert excep, "[ERROR] No Ang_ assigned should have raised exception"
 cData.setAngularConstraints(Id, matrix([0., 0., 1.]).T)
@@ -93,7 +94,7 @@ cData.Ang_
 excep = False
 try:
     cData.setAngularConstraints(Id, matrix([0., 0., 0., 1.]).T)
-except RuntimeError, e:
+except RuntimeError as e:
     excep = True
 assert excep, "[ERROR] Missmatching matrix and vector should raise an error"
 
@@ -163,8 +164,8 @@ res = computeCOMTraj(pD, matrix([0.4, 0.4, 0.4]).T, 0.05)
 try:
     test = SOLVER_GLPK
     res = computeCOMTraj(pD, matrix([0.4, 0.4, 0.4]).T, 0.05, SOLVER_GLPK)
-except NameError, e:
-    print "[WARNING] SOLVER_GLPK is not defined. Consider installing GLPK if you are using CROC with a force formulation"
+except NameError as e:
+    print ("[WARNING] SOLVER_GLPK is not defined. Consider installing GLPK if you are using CROC with a force formulation")
 
 res = computeCOMTraj(pD, matrix([0.4, 0.4, 0.4]).T, 0.05, SOLVER_QUADPROG)
 #~ res = computeCOMTraj(pD,matrix([0.4,0.4,0.4]).T,0.05,SOLVER_QUADPROG_SPARSE)
@@ -174,8 +175,8 @@ assert np.linalg.norm(res.c_of_t.derivate(1.2, 1)) < 0.00000001
 excep = False
 try:
     res = computeCOMTraj(pD, matrix([0.4, 0.4]).T, 0.05)
-except RuntimeError, e:
+except RuntimeError as e:
     excep = True
 assert excep, "[ERROR] computeCOMTraj should have raised exception"
 
-print "all tests passed"
+print ("all tests passed")

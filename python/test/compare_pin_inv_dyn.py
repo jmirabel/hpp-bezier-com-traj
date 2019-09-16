@@ -5,6 +5,7 @@ Created on Thu Sep  1 16:54:39 2016
 @author: stonneau
 """
 
+from __future__ import print_function
 from pinocchio_inv_dyn.optimization.solver_LP_abstract import LP_status, LP_status_string
 from pinocchio_inv_dyn.multi_contact.stability_criterion import  Bunch
 from pinocchio_inv_dyn.optimization.solver_LP_abstract import getNewSolver
@@ -41,9 +42,9 @@ def is_stable(H,c=array([0.,0.,0.]), ddc=array([0.,0.,0.]), dL=array([0.,0.,0.])
     w = compute_w(c, ddc, dL, m, g_vec) 
     res = np.max(H.dot(w))
     if(res > -robustness):
-        print "offset ", res, dL
+        print ("offset ", res, dL)
         w = compute_w(c, ddc, array([0.,0.,0.]), m, g_vec) 
-        print "offset2 ", np.max(H.dot(w))
+        print ("offset2 ", np.max(H.dot(w)))
     return res<=-robustness
 
 def allZeros(t):
@@ -70,8 +71,8 @@ def __check_trajectory(p0,p1,p2,p3,T,H, mass, g, time_step = 0.1, dL = allZeros)
             if t > 0.1:
                 raise ValueError("trajectory is not stale ! at ", t)
             else:
-                print is_stable(H,c=c_tT(t), ddc=ddc_tT(t), dL=asarray(dL(t/T)).flatten(), m = mass, g_vec=g, robustness = -0.00001)
-                print "failed at 0"
+                print (is_stable(H,c=c_tT(t), ddc=ddc_tT(t), dL=asarray(dL(t/T)).flatten(), m = mass, g_vec=g, robustness = -0.00001))
+                print ("failed at 0")
 
 ###################
 # LP BEZIER TESTS #
@@ -139,7 +140,7 @@ def test_continuous_cpp_vs_continuous_py(N_CONTACTS = 2, solver='qpoases', verb=
             __check_trajectory(bezierSolver._p0, bezierSolver._p1, res.c, res.c, el, bezierSolver._H, 
                                bezierSolver._mass, bezierSolver._g, time_step = time_step_check, dL = bezier(matrix([p_i.tolist() for p_i in res.wpsdL]).transpose()))
             if i != 0:
-                print "continuous Failed to stop at 1, but managed to stop at ", el
+                print ("continuous Failed to stop at 1, but managed to stop at ", el)
     
     found = False
     time_step_check = 0.05
@@ -154,7 +155,7 @@ def test_continuous_cpp_vs_continuous_py(N_CONTACTS = 2, solver='qpoases', verb=
                                #~ bezierSolver._mass, bezierSolver._g, time_step = time_step_check, dL = res2.dL_of_t)
                                bezierSolver._mass, bezierSolver._g, time_step = time_step_check, dL =  bezier(matrix([p_i.tolist() for p_i in res2.wpsdL]).transpose()))
             if i != 0:
-                print "ang_momentum Failed to stop at 1, but managed to stop at ", el
+                print ("ang_momentum Failed to stop at 1, but managed to stop at ", el)
     #~ res2 = None
     #~ try:
         #~ res2 = stabilitySolver.can_I_stop();
@@ -162,10 +163,10 @@ def test_continuous_cpp_vs_continuous_py(N_CONTACTS = 2, solver='qpoases', verb=
         #~ pass
         
     if(res2.is_stable != res.is_stable ):
-		if(res.is_stable):
-			print "continuous won"
-		else:
-			print "ang_momentum won"
+        if(res.is_stable):
+            print ("continuous won")
+        else:
+            print ("ang_momentum won")
     
     return res2.is_stable, res.is_stable, res2, res, c0, dc0, H, h, p, N
 
@@ -239,17 +240,17 @@ if __name__=="__main__":
     def plot_win_curve(n = -1, num_pts = 20):
         global curves_when_i_win
         if n > len(curves_when_i_win) -1 or n < 0:
-            print "n bigger than num curves or equal to -1, plotting last curve"
+            print ("n bigger than num curves or equal to -1, plotting last curve")
             n = len(curves_when_i_win) -1        
         c0, dc0, c_end, dc_end, t_max, c_of_t, dc_of_t, ddc_of_t, H, h, p, N, dl_of_t, L_of_t = curves_when_i_win[n]
-        print "c0 ", c0
-        print "Is c0 stable ? ", check_static_eq(H, h, mass, c0, g_vector)
-        print "Is end stable ? ", check_static_eq(H, h, mass, c_of_t(t_max), g_vector)
+        print ("c0 ", c0)
+        print ("Is c0 stable ? ", check_static_eq(H, h, mass, c0, g_vector))
+        print ("Is end stable ? ", check_static_eq(H, h, mass, c_of_t(t_max), g_vector))
         
         w = np.zeros(6);
         w[2] = -mass*9.81;
         w[3:] = mass*np.cross(c_of_t(t_max), g_vector);
-        print 'max ', np.max(np.dot(H, w) - h)
+        print ('max ', np.max(np.dot(H, w) - h))
         
         X_MIN = np.min(p[:,0]);
         X_MAX = np.max(p[:,0]);
@@ -257,10 +258,10 @@ if __name__=="__main__":
         X_MAX += 0.1*(X_MAX-X_MIN);
         Y_MIN = np.min(p[:,1]);
         Y_MAX = np.max(p[:,1]);
-        print "Is XMIN ? ", X_MIN
-        print "Is XMAX ? ", X_MAX
-        print "Is YMIN ? ", Y_MIN
-        print "Is YMAX ? ", Y_MAX
+        print ("Is XMIN ? ", X_MIN)
+        print ("Is XMAX ? ", X_MAX)
+        print ("Is YMIN ? ", Y_MIN)
+        print ("Is YMAX ? ", Y_MAX)
         delta = t_max / float(num_pts)
         num_pts +=1;
         fig = plt.figure()  
@@ -285,8 +286,8 @@ if __name__=="__main__":
         #~ __plot_3d_points(ax, [-dc0* i * delta for i in range(num_pts)])
         #~ print "cross product ", X(-dc0,ddc_of_t(0.5) - ddc_of_t(0) ) / norm(X(-dc0,ddc_of_t(0.5) - ddc_of_t(0) ))
         #~ print "init acceleration ", ddc_of_t(0)
-        print "init velocity ", dc_of_t(0)
-        print "end velocity ", dc_of_t(t_max)
+        print ("init velocity ", dc_of_t(0))
+        print ("end velocity ", dc_of_t(t_max))
         #~ print "cross product ", X(-dc0,ddc_of_t(t_max) - ddc_of_t(0) ) / norm(X(-dc0,ddc_of_t(t_max) - ddc_of_t(0) ))
         
         #~ plt.show()
@@ -294,7 +295,7 @@ if __name__=="__main__":
     def plot_n_win_curves(n = -1, num_pts = 50):
         global curves_when_i_win
         if n > len(curves_when_i_win) -1 or n < 0:
-            print "n bigger than num curves or equal to -1, plotting last curve"
+            print ("n bigger than num curves or equal to -1, plotting last curve")
             n = len(curves_when_i_win) -1
         for i in range(n):
             plot_win_curve(i, num_pts)
@@ -331,11 +332,11 @@ if __name__=="__main__":
         else:
             total_not_stop+=1
     
-    print "% of stops", 100. * float(total_stop) / num_tested, total_stop
-    print "% of total_disagree", 100. * float(total_disagree) / num_tested, total_disagree
+    print ("% of stops", 100. * float(total_stop) / num_tested, total_stop)
+    print ("% of total_disagree", 100. * float(total_disagree) / num_tested, total_disagree)
     if total_disagree > 0:
-        print "% of wins", 100. * float(mine_won) / total_disagree
-        print "% of lose", 100. * float(mine_lose) / total_disagree
+        print ("% of wins", 100. * float(mine_won) / total_disagree)
+        print ("% of lose", 100. * float(mine_lose) / total_disagree)
     
     
         
