@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/python.cmake)
+INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/test.cmake)
 INCLUDE(cmake/hpp.cmake)
 
@@ -27,11 +28,11 @@ OPTION (PRINT_QHULL_INEQ "generate text file containing last inequality computed
 
 IF(BUILD_PYTHON_INTERFACE)
   # search for python
-  FINDPYTHON(2.7  REQUIRED)
-  find_package( PythonLibs 2.7 REQUIRED )
+  FINDPYTHON()
   include_directories( ${PYTHON_INCLUDE_DIRS} )
 
-  find_package( Boost COMPONENTS python REQUIRED )
+  SET(BOOST_COMPONENTS python)
+  SEARCH_FOR_BOOST()
   include_directories( ${Boost_INCLUDE_DIR} )
 ENDIF(BUILD_PYTHON_INTERFACE)
 
